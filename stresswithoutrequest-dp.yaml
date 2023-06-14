@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stresswithoutrequests
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  replicas: 3 
+  minReadySeconds: 4
+  selector:
+    matchLabels:
+      app: stresswithoutrequests
+  template:
+    metadata:
+      name: stresswithoutrequests
+      labels:
+        app: stresswithoutrequests
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: erkan2
+      terminationGracePeriodSeconds: 2
+      containers:
+      - name: besteffort
+        image: jess/stress
+        args:
+        - --vm
+        - "1"
+        - --vm-bytes
+        - "300m"
+        - --vm-hang
+        - "0"

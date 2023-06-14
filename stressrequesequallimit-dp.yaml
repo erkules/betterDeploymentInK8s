@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stressrequestequallimit
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  replicas: 3 
+  minReadySeconds: 4
+  selector:
+    matchLabels:
+      app: stressrequestequallimit
+  template:
+    metadata:
+      name: stressrequestequallimit
+      labels:
+        app: stressrequestequallimit
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: erkan2
+      terminationGracePeriodSeconds: 2
+      containers:
+      - name: qosguranteed
+        image: jess/stress
+        args:
+        - --vm
+        - "1"
+        - --vm-bytes
+        - "150m"
+        - --vm-hang
+        - "0"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+            ephemeral-storage: "10Mi"
+          limits:
+            cpu: 50m
+            memory: 200Mi
+            ephemeral-storage: "10Mi"
